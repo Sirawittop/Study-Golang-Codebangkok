@@ -14,8 +14,8 @@ func SliceList() {
 	fmt.Println(x)
 	y := len(x)
 	fmt.Println(y)
-	xx := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
-	xxx := xx[4:7]
+	xx := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	xxx := xx[4:7] // end index+1
 	fmt.Println(xxx)
 }
 
