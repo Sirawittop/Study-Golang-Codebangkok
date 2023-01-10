@@ -1,23 +1,23 @@
 package main
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 )
 
 type Cover struct {
-	id   int
-	name string
+	Id   int
+	Name string
 }
 
-var db *sql.DB
+var db *sqlx.DB
 
 func main() {
 	var err error
-	db, err = sql.Open("mysql", "root:42085344720062546@(127.0.0.1:3306)/coursedb")
+	db, err = sqlx.Open("mysql", "root:42085344720062546@(127.0.0.1:3306)/coursedb")
 	if err != nil {
 		panic(err)
 	}
@@ -36,10 +36,17 @@ func main() {
 	// }
 
 	// Read
-	covers, err := GetCovers()
+	// covers, err := GetCovers()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// get coversx
+	covers, err := GetcoversX()
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
+
 	for _, v := range covers {
 		fmt.Println(v)
 	}
@@ -49,6 +56,15 @@ func main() {
 	// 	}
 	// 	fmt.Println(cover)
 
+}
+func GetcoversX() ([]Cover, error) {
+	query := "SELECT id,name FROM new_table"
+	covers := []Cover{}
+	err := db.Select(&covers, query)
+	if err != nil {
+		return nil, err
+	}
+	return covers, nil
 }
 
 func GetCovers() ([]Cover, error) {
@@ -65,7 +81,7 @@ func GetCovers() ([]Cover, error) {
 	covers := []Cover{}
 	for rows.Next() {
 		cover := Cover{}
-		err = rows.Scan(&cover.id, &cover.name)
+		err = rows.Scan(&cover.Id, &cover.Name)
 		if err != nil {
 			return nil, err
 		}
@@ -81,7 +97,7 @@ func GetCover(id int) (*Cover, error) {
 	query := "SELECT id,name FROM new_table WHERE id=?"
 	row := db.QueryRow(query, id)
 	cover := Cover{}
-	err = row.Scan(&cover.id, &cover.name)
+	err = row.Scan(&cover.Id, &cover.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +105,7 @@ func GetCover(id int) (*Cover, error) {
 }
 func AddCover(cover Cover) error {
 	query := "INSERT INTO new_table (id,name) VALUES (?,?)"
-	result, err := db.Exec(query, cover.id, cover.name)
+	result, err := db.Exec(query, cover.Id, cover.Name)
 	if err != nil {
 		return err
 	}
@@ -104,7 +120,7 @@ func AddCover(cover Cover) error {
 }
 func UpdateCover(cover Cover) error {
 	query := "UPDATE new_table SET name = ? WHERE id = ?"
-	result, err := db.Exec(query, cover.name, cover.id)
+	result, err := db.Exec(query, cover.Name, cover.Id)
 	if err != nil {
 		return err
 	}
