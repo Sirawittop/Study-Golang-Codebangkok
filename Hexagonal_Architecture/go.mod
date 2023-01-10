@@ -1,3 +1,5 @@
-module github.com/TopSirawit/Study-Golang-Codebangkok/tree/main/Hexagonal_Architecture
+module HexArc
 
 go 1.18
+
+require(HexArc/repository/repository)
